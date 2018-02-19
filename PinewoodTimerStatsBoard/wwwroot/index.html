@@ -48,10 +48,11 @@
         let intervalId = 0;
 
         function raceTimerTick(){
-            vm.et(new Date().getTime() - startTime);
+            vm.et((new Date().getTime() - startTime)/1000);
         };
 
         connection.on('startRace', data => {
+            startTime = new Date().getTime();
             clearInterval(intervalId);
             vm.lanes.forEach(lane => {
                 lane.place(0);
