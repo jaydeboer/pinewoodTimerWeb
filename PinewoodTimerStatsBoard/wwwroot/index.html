@@ -19,8 +19,8 @@
         <div class="row" data-bind="foreach:lanes">
             <div class="col"><h2 data-bind="visible:place() > 0, text:place">Running</h2></div>
         </div>
-        <div class="row"  data-bind="foreach:lanes">
-            <div class="col"><h2 data-bind="text:time"></h2></div>
+        <div class="row" data-bind="foreach:lanes">
+            <div class="col"><h2 data-bind="text:place() === 0 ? $parent.et : time"></h2></div>
         </div>
     </div>
     <script type='text/javascript' src='Scripts/knockout-3.4.2.js'></script>
@@ -35,6 +35,7 @@
 
         function ViewModel() {
             this.lanes = [];
+            this.et = ko.observable(0);
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
@@ -43,12 +44,21 @@
  
         let vm = new ViewModel();
         let connection = new signalR.HubConnection('/statshub');
+        let startTime = new Date().getTime();
+        let intervalId = 0;
+
+        function raceTimerTick(){
+            vm.et(new Date().getTime() - startTime);
+        };
 
         connection.on('startRace', data => {
+            clearInterval(intervalId);
             vm.lanes.forEach(lane => {
                 lane.place(0);
                 lane.time("Running");
             })
+            vm.et(0);
+            setInterval(raceTimerTick, 1000/30);
             console.log("Race Started");
         });
 
@@ -56,6 +66,8 @@
             vm.lanes[lane - 1].place(place);
             vm.lanes[lane - 1].time(time);
             console.log("Lane " + lane + " place " + place + " Time " + time)
+            if (place === 4)
+                clearInterval(intervalId);
         });
         
         connection.start();

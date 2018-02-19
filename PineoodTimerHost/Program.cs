@@ -37,7 +37,13 @@ namespace PineoodTimerHost
                     Console.WriteLine("No ports found");
                 }
             }
-            Console.ReadKey();
+            char pressed;
+            do
+            {
+                pressed = Console.ReadKey().KeyChar;
+                if (pressed != 'e')
+                    ProcessChar(pressed);
+            }  while (pressed != 'e');
         }
 
         private static Stopwatch raceTimer = new Stopwatch();
