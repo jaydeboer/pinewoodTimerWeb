@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Pinewood Timer</title>
+    <link rel="stylesheet" href="styles/bootstrap.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div>
+            <h1>Track 1</h1>
+        </div>
+        <div class="row">
+            <div class="col"><h2>Lane 1</h2></div>
+            <div class="col"><h2>Lane 2</h2></div>
+            <div class="col"><h2>Lane 3</h2></div>
+            <div class="col"><h2>Lane 4</h2></div>
+        </div>
+        <div class="row" data-bind="foreach:lanes">
+            <div class="col"><h2 data-bind="visible:place() > 0, text:place">Running</h2></div>
+        </div>
+        <div class="row"  data-bind="foreach:lanes">
+            <div class="col"><h2 data-bind="text:time"></h2></div>
+        </div>
+    </div>
+    <script type='text/javascript' src='Scripts/knockout-3.4.2.js'></script>
+    
+    <script type='text/javascript' src='Scripts/signalr-client-1.0.0-alpha2-final.js'></script>
+    <script type='text/javascript' >
+
+        function Lane() {
+            this.place = ko.observable(0);
+            this.time = ko.observable("Running");
+        };
+
+        function ViewModel() {
+            this.lanes = [];
+            this.lanes.push(new Lane());
+            this.lanes.push(new Lane());
+            this.lanes.push(new Lane());
+            this.lanes.push(new Lane());
+        }
+ 
+        let vm = new ViewModel();
+        let connection = new signalR.HubConnection('/statshub');
+
+        connection.on('startRace', data => {
+            vm.lanes.forEach(lane => {
+                lane.place(0);
+                lane.time("Running");
+            })
+            console.log("Race Started");
+        });
+
+        connection.on('laneFinished', (lane, place, time) => {
+            vm.lanes[lane - 1].place(place);
+            vm.lanes[lane - 1].time(time);
+            console.log("Lane " + lane + " place " + place + " Time " + time)
+        });
+        
+        connection.start();
+        ko.applyBindings(vm);
+        </script>
+</body>
+</html>
+
