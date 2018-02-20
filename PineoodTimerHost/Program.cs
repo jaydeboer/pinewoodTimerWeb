@@ -102,7 +102,6 @@ namespace PineoodTimerHost
                     raceTimer.Start();
                     finishedLanes.Clear();
                     timeout.Enabled = true;
-                    Console.WriteLine();
                     signalrConnection.InvokeAsync("StartRace");
 
                     break;
