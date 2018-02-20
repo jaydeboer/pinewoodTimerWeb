@@ -48,7 +48,7 @@ namespace PineoodTimerHost
 
         private static Stopwatch raceTimer = new Stopwatch();
         private static Timer timeout = new Timer(10000);
-        private static List<char> finishedLanes = new List<char>();
+        private static HashSet<char> finishedLanes = new HashSet<char>();
         private static HubConnection hub;
 
         private static void MySerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
