@@ -16,10 +16,10 @@ namespace PineoodTimerHost
                 .Build();
             hub.StartAsync().Wait();
 
-            string[] ports = SerialPort.GetPortNames();
-            foreach (string port in ports)
+            try
             {
-                try
+                string[] ports = SerialPort.GetPortNames();
+                foreach (string port in ports)
                 {
                     SerialPort mySerialPort = new SerialPort(port);
                     mySerialPort.BaudRate = 115200;
@@ -32,10 +32,10 @@ namespace PineoodTimerHost
                     mySerialPort.Open();
                     Console.WriteLine($"Opened port {port}");
                 }
-                catch
-                {
-                    Console.WriteLine("No ports found");
-                }
+            }
+            catch
+            {
+                Console.WriteLine("No ports found");
             }
             char pressed;
             do
