@@ -6,15 +6,20 @@ namespace PinewoodTimerStatsBoard
 {
     public class StatsHub : Hub
     {
-        public Task StartRace()
+        public Task NewTrack(int trackNumber)
+        {
+            Console.WriteLine($"New Track {trackNumber}");
+            return Clients.All.InvokeAsync("NewTrack", trackNumber);
+        }
+        public Task StartRace(int trackNumber)
         {
             Console.WriteLine("Race Started");
-            return Clients.All.InvokeAsync("StartRace");
+            return Clients.All.InvokeAsync("StartRace", trackNumber);
         }
-        public Task LaneFinished(int lane, int place, string time)
+        public Task LaneFinished(int trackNumber, int lane, int place, string time)
         {
-            Console.WriteLine($"Lane {lane} in place {place} with time {time}");
-            return Clients.All.InvokeAsync("LaneFinished", lane, place, time);
+            Console.WriteLine($"Track {trackNumber} lane {lane} in place {place} with time {time}");
+            return Clients.All.InvokeAsync("LaneFinished", trackNumber, lane, place, time);
         }
     }
 }

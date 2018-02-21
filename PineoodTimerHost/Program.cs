@@ -22,8 +22,7 @@ namespace PineoodTimerHost
             portWatcher_Elapsed(null, null);
             if (!knownPorts.Any())
             {
-                knownPorts.Add("COM1");
-                tracks.Add(new Track { PortName = "COM1", TrackNumber = knownPorts.Count });
+                AddTrack("COM1");
             }
             selectedPort = knownPorts[0];
 
@@ -34,7 +33,7 @@ namespace PineoodTimerHost
             {
                 pressed = Console.ReadKey(true).KeyChar;
                 if (pressed != 'e')
-                    ProcessChar(pressed, selectedPort);
+                    ProcessChar(pressed, tracks.First(t => t.PortName.Equals(selectedPort, StringComparison.InvariantCultureIgnoreCase)));
             } while (pressed != 'e');
         }
 
@@ -66,7 +65,7 @@ namespace PineoodTimerHost
                     mySerialPort.DataReceived += MySerialPort_DataReceived;
                     mySerialPort.Open();
                     Console.WriteLine($"Opened port {port}");
-                    knownPorts.Add(port);
+                    AddTrack(port);
                 }
             }
             catch
@@ -77,20 +76,27 @@ namespace PineoodTimerHost
         private static Stopwatch raceTimer = new Stopwatch();
         private static Timer timeout = new Timer(10000);
         private static Timer portWatcher = new Timer(10000);
-        private static HashSet<char> finishedLanes = new HashSet<char>();
         private static List<string> knownPorts = new List<string>();
         private static HubConnection signalrConnection;
         private static string selectedPort;
+
+        private static void AddTrack(string portName)
+        {
+            knownPorts.Add(portName);
+            var track = new Track { PortName = portName, TrackNumber = knownPorts.Count };
+            tracks.Add(track);
+            signalrConnection.InvokeAsync("NewTrack", track.TrackNumber);
+        }
 
         private static void MySerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
             string inData = sp.ReadExisting();
             foreach (char data in inData)
-                ProcessChar(data, sp.PortName);
+                ProcessChar(data, tracks.First(t => t.PortName.Equals(selectedPort, StringComparison.InvariantCultureIgnoreCase)));
         }
 
-        static void ProcessChar(char data, string portName)
+        static void ProcessChar(char data, Track track)
         {
             //Console.WriteLine($"Received {data}.");
             TimeSpan ts = raceTimer.Elapsed;
@@ -101,17 +107,17 @@ namespace PineoodTimerHost
                 case 'S': // Race started
                     raceTimer.Reset();
                     raceTimer.Start();
-                    finishedLanes.Clear();
+                    track.FinishedLanes.Clear();
                     timeout.Enabled = true;
-                    signalrConnection.InvokeAsync("StartRace");
+                    signalrConnection.InvokeAsync("StartRace", track.TrackNumber);
 
                     break;
                 case '1': // Lane 1 finished.
                 case '2': // Lane 2 finished
                 case '3': // Lane 3 finished
                 case '4': // Lane 4 finished
-                    finishedLanes.Add(data);
-                    signalrConnection.InvokeAsync("LaneFinished", data, finishedLanes.Count, time);
+                    track.FinishedLanes.Add(data);
+                    signalrConnection.InvokeAsync("LaneFinished", track.TrackNumber, data, track.FinishedLanes.Count, time);
                     //Console.WriteLine($"Lane {data} finished with rank {finishedLanes.Count + 1} with an ET of {time} seconds");
                     break;
                 // the rest of these commands are for testing only

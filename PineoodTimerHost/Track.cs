@@ -19,5 +19,7 @@ namespace PineoodTimerHost
         public Int32 TrackNumber { get; set; }
         public String PortName { get; set; }
         private Lane[] _Lanes;
+        public HashSet<char> FinishedLanes = new HashSet<char>();
+
     }
 }
