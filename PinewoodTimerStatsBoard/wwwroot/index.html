@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="styles/bootstrap.css">
 </head>
 <body class="bg-dark">
-    <div class="container-fluid bg-dark text-white">
+    <div class="container-fluid bg-dark text-white" data-bind="foreach:tracks">
         <div>
-            <h2>Track 1</h2>
+            <h2>Track <span data-bind"text:$index"></span></h2>
         </div>
         <div class="row">
             <div class="col text-center"><h3>Lane 1</h3></div>
@@ -33,49 +33,70 @@
     <script type='text/javascript' src='Scripts/signalr-client-1.0.0-alpha2-final.js'></script>
     <script type='text/javascript' >
 
-        function Lane() {
-            this.place = ko.observable(0);
-            this.time = ko.observable("Running");
-        };
-
-        function ViewModel() {
+        function Track() {
             this.lanes = [];
             this.et = ko.observable(0);
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
+            this.startTime = new Date().getTime();
+            this.intervalId = 0;
+            this.startTimer = function() {
+                track.et(0);
+                track.intervalId = setInterval(raceTimerTick, 1000/30);
+            };
+            function raceTimerTick(){
+                et((new Date().getTime() - startTime)/1000);
+            };
+        }
+
+        function Lane() {
+            this.place = ko.observable(0);
+            this.time = ko.observable("Running");
+        };
+
+        function ViewModel() {
+            this.tracks = ko.observableArray();
         }
  
         let vm = new ViewModel();
         let connection = new signalR.HubConnection('/statshub');
-        let startTime = new Date().getTime();
-        let intervalId = 0;
 
-        function raceTimerTick(){
-            vm.et((new Date().getTime() - startTime)/1000);
-        };
+        connection.on('setTrackCount', trackCount => {
+            for(let i = 0; i < trackCount; i++)
+                addTrack(1);
+        });
+
+        connection.on('newTrack', trackNumber => {
+            addTrack(trackNumber);
+        });
 
         connection.on('startRace', trackNumber => {
-            startTime = new Date().getTime();
-            clearInterval(intervalId);
-            vm.lanes.forEach(lane => {
+            let track = vm.tracks()[trackNumber - 1];
+            track.startTime = new Date().getTime();
+            clearInterval(track.intervalId);
+            track.lanes.forEach(lane => {
                 lane.place(0);
-                lane.time("Running");
+                lane.time("");
             })
-            vm.et(0);
-            setInterval(raceTimerTick, 1000/30);
-            console.log("Race Started");
+            
+            console.log("Race Started on track " + trackNumber);
         });
 
         connection.on('laneFinished', (trackNumber, lane, place, time) => {
-            vm.lanes[lane - 1].place(place);
-            vm.lanes[lane - 1].time(time);
-            console.log("Lane " + lane + " place " + place + " Time " + time)
+            let track = vm.tracks()[trackNumber - 1];
+            track.lanes[lane - 1].place(place);
+            track.lanes[lane - 1].time(time);
+            //console.log("Lane " + lane + " place " + place + " Time " + time)
             if (place === 4)
-                clearInterval(intervalId);
+                clearInterval(track.intervalId);
         });
         
+        function addTrack(trackNumber){
+            vm.tracks.push(new Track());
+        }
+
         connection.start();
         ko.applyBindings(vm);
         </script>

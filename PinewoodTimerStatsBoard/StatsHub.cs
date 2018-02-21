@@ -9,6 +9,7 @@ namespace PinewoodTimerStatsBoard
         public Task NewTrack(int trackNumber)
         {
             Console.WriteLine($"New Track {trackNumber}");
+            _trackCount++;
             return Clients.All.InvokeAsync("NewTrack", trackNumber);
         }
         public Task StartRace(int trackNumber)
@@ -21,5 +22,11 @@ namespace PinewoodTimerStatsBoard
             Console.WriteLine($"Track {trackNumber} lane {lane} in place {place} with time {time}");
             return Clients.All.InvokeAsync("LaneFinished", trackNumber, lane, place, time);
         }
+
+        public Task GetTrackCount()
+        {
+            return Clients.Client(Context.ConnectionId).InvokeAsync("SetTrackCount", _trackCount);
+        }
+        private int _trackCount = 0;
     }
 }
