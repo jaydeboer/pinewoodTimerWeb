@@ -6,9 +6,9 @@ namespace PineoodTimerHost
 {
     class Track
     {
-        public Track(Lane[] lanes)
+        public Track()
         {
-            _Lanes = lanes;
+            _Lanes = new Lane[MaxLanes];
         }
         public Lane[] GetPages()
         {

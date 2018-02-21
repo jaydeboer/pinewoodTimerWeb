@@ -23,6 +23,7 @@ namespace PineoodTimerHost
             if (!knownPorts.Any())
             {
                 knownPorts.Add("COM1");
+                tracks.Add(new Track { PortName = "COM1", TrackNumber = knownPorts.Count });
             }
             selectedPort = knownPorts[0];
 
@@ -72,7 +73,7 @@ namespace PineoodTimerHost
             {
             }
         }
-
+        private static List<Track> tracks = new List<Track>();
         private static Stopwatch raceTimer = new Stopwatch();
         private static Timer timeout = new Timer(10000);
         private static Timer portWatcher = new Timer(10000);
@@ -117,6 +118,7 @@ namespace PineoodTimerHost
                 case 'p':
                 case 'P':
                     knownPorts.Add($"COM{knownPorts.Count + 1}");
+                    tracks.Add(new Track { PortName = $"COM{knownPorts.Count + 1}", TrackNumber = knownPorts.Count});
                     Console.WriteLine($"Added port {knownPorts.Last()}");
                     break;
                 case 't':
