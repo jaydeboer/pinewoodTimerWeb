@@ -123,8 +123,7 @@ namespace PineoodTimerHost
                 // the rest of these commands are for testing only
                 case 'p':
                 case 'P':
-                    knownPorts.Add($"COM{knownPorts.Count + 1}");
-                    tracks.Add(new Track { PortName = $"COM{knownPorts.Count + 1}", TrackNumber = knownPorts.Count});
+                    AddTrack($"COM{knownPorts.Count + 1}");
                     Console.WriteLine($"Added port {knownPorts.Last()}");
                     break;
                 case 't':
