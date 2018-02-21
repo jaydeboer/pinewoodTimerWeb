@@ -56,7 +56,7 @@
             vm.et((new Date().getTime() - startTime)/1000);
         };
 
-        connection.on('startRace', data => {
+        connection.on('startRace', trackNumber => {
             startTime = new Date().getTime();
             clearInterval(intervalId);
             vm.lanes.forEach(lane => {
@@ -68,7 +68,7 @@
             console.log("Race Started");
         });
 
-        connection.on('laneFinished', (lane, place, time) => {
+        connection.on('laneFinished', (trackNumber, lane, place, time) => {
             vm.lanes[lane - 1].place(place);
             vm.lanes[lane - 1].time(time);
             console.log("Lane " + lane + " place " + place + " Time " + time)
