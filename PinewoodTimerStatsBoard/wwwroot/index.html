@@ -34,26 +34,27 @@
     <script type='text/javascript' >
 
         function Track() {
+            self = this;
             this.lanes = [];
             this.et = ko.observable(0);
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
-            this.startTime = new Date().getTime();
             this.intervalId = 0;
             this.startTimer = function() {
-                track.et(0);
-                track.intervalId = setInterval(raceTimerTick, 1000/30);
+                self.et(0);
+                self.startTime = new Date().getTime();
+                self.intervalId = setInterval(self.raceTimerTick, 1000/30);
             };
-            function raceTimerTick(){
-                et((new Date().getTime() - startTime)/1000);
+            this.raceTimerTick = function(){
+                self.et((new Date().getTime() - self.startTime)/1000);
             };
         }
 
         function Lane() {
             this.place = ko.observable(0);
-            this.time = ko.observable("Running");
+            this.time = ko.observable("");
         };
 
         function ViewModel() {
@@ -74,13 +75,12 @@
 
         connection.on('startRace', trackNumber => {
             let track = vm.tracks()[trackNumber - 1];
-            track.startTime = new Date().getTime();
             clearInterval(track.intervalId);
             track.lanes.forEach(lane => {
                 lane.place(0);
                 lane.time("");
             })
-            
+            track.startTimer();
             console.log("Race Started on track " + trackNumber);
         });
 
