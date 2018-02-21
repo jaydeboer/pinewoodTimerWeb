@@ -34,7 +34,6 @@
     <script type='text/javascript' >
 
         function Track(trackNumber) {
-            self = this;
             this.trackNumber = trackNumber;
             this.lanes = [];
             this.et = ko.observable(0);
@@ -43,13 +42,13 @@
             this.lanes.push(new Lane());
             this.lanes.push(new Lane());
             this.intervalId = 0;
-            this.startTimer = function() {
-                self.et(0);
-                self.startTime = new Date().getTime();
-                self.intervalId = setInterval(self.raceTimerTick, 1000/30);
+            this.startTimer = () => {
+                this.et(0);
+                this.startTime = new Date().getTime();
+                this.intervalId = setInterval(this.raceTimerTick, 1000/30);
             };
-            this.raceTimerTick = function(){
-                self.et((new Date().getTime() - self.startTime)/1000);
+            this.raceTimerTick = () => {
+                this.et((new Date().getTime() - this.startTime)/1000);
             };
         }
 

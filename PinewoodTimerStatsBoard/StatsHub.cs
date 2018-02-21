@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PinewoodTimerStatsBoard
@@ -9,7 +10,7 @@ namespace PinewoodTimerStatsBoard
         public Task NewTrack(int trackNumber)
         {
             Console.WriteLine($"New Track {trackNumber}");
-            _trackCount++;
+            _tracks.Add(trackNumber);
             return Clients.All.InvokeAsync("NewTrack", trackNumber);
         }
         public Task StartRace(int trackNumber)
@@ -25,8 +26,8 @@ namespace PinewoodTimerStatsBoard
 
         public Task GetTrackCount()
         {
-            return Clients.Client(Context.ConnectionId).InvokeAsync("SetTrackCount", _trackCount);
+            return Clients.Client(Context.ConnectionId).InvokeAsync("SetTrackCount", _tracks.Count);
         }
-        private static int _trackCount = 0;
+        private static HashSet<int> _tracks = new HashSet<int>();
     }
 }
