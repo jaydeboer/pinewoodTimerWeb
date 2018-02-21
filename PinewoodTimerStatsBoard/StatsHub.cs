@@ -27,6 +27,6 @@ namespace PinewoodTimerStatsBoard
         {
             return Clients.Client(Context.ConnectionId).InvokeAsync("SetTrackCount", _trackCount);
         }
-        private int _trackCount = 0;
+        private static int _trackCount = 0;
     }
 }

@@ -10,7 +10,7 @@
 <body class="bg-dark">
     <div class="container-fluid bg-dark text-white" data-bind="foreach:tracks">
         <div>
-            <h2>Track <span data-bind"text:$index"></span></h2>
+            <h2>Track <span data-bind="text: trackNumber"> </span></h2>
         </div>
         <div class="row">
             <div class="col text-center"><h3>Lane 1</h3></div>
@@ -33,8 +33,9 @@
     <script type='text/javascript' src='Scripts/signalr-client-1.0.0-alpha2-final.js'></script>
     <script type='text/javascript' >
 
-        function Track() {
+        function Track(trackNumber) {
             self = this;
+            this.trackNumber = trackNumber;
             this.lanes = [];
             this.et = ko.observable(0);
             this.lanes.push(new Lane());
@@ -66,7 +67,7 @@
 
         connection.on('setTrackCount', trackCount => {
             for(let i = 0; i < trackCount; i++)
-                addTrack(1);
+                addTrack(i+1);
         });
 
         connection.on('newTrack', trackNumber => {
@@ -94,10 +95,11 @@
         });
         
         function addTrack(trackNumber){
-            vm.tracks.push(new Track());
+            vm.tracks.push(new Track(trackNumber));
         }
 
-        connection.start();
+        connection.start().then(() => connection.invoke('getTrackCount'));
+
         ko.applyBindings(vm);
         </script>
     </body>
