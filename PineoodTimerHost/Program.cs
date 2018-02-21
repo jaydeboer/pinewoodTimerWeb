@@ -116,9 +116,13 @@ namespace PineoodTimerHost
                 case '2': // Lane 2 finished
                 case '3': // Lane 3 finished
                 case '4': // Lane 4 finished
+                    var previousMax = track.FinishedLanes.Count;
                     track.FinishedLanes.Add(data);
-                    signalrConnection.InvokeAsync("LaneFinished", track.TrackNumber, data, track.FinishedLanes.Count, time);
-                    //Console.WriteLine($"Lane {data} finished with rank {finishedLanes.Count + 1} with an ET of {time} seconds");
+                    if (previousMax != track.FinishedLanes.Count)
+                    {
+                        signalrConnection.InvokeAsync("LaneFinished", track.TrackNumber, data, track.FinishedLanes.Count, time);
+                        //Console.WriteLine($"Lane {data} finished with rank {finishedLanes.Count + 1} with an ET of {time} seconds");
+                    }
                     break;
                 // the rest of these commands are for testing only
                 case 'p':
