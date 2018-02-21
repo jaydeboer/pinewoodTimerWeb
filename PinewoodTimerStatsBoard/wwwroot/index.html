@@ -13,16 +13,16 @@
             <h2>Track 1</h2>
         </div>
         <div class="row">
-            <div class="col"><h3>Lane 1</h3></div>
-            <div class="col"><h3>Lane 2</h3></div>
-            <div class="col"><h3>Lane 3</h3></div>
-            <div class="col"><h3>Lane 4</h3></div>
+            <div class="col text-center"><h3>Lane 1</h3></div>
+            <div class="col text-center"><h3>Lane 2</h3></div>
+            <div class="col text-center"><h3>Lane 3</h3></div>
+            <div class="col text-center"><h3>Lane 4</h3></div>
         </div>
         <div class="row" data-bind="foreach:lanes">
-            <div class="col"><h1 class="display-xl font-weight-bold" data-bind="visible:place() > 0, text:place, css:{ 'text-primary': place() == 1, 'text-danger': place() == 2, 'text-white': place() == 3, 'text-warning': place() == 4 }">Running</h1></div>
+            <div class="col text-center"><h1 class="display-xl font-weight-bold" data-bind="visible:place() > 0, text:place, css:{ 'text-primary': place() == 1, 'text-danger': place() == 2, 'text-white': place() == 3, 'text-warning': place() == 4 }">Running</h1></div>
         </div>
         <div class="row" data-bind="foreach:lanes">
-            <div class="col text-success"><h4 data-bind="text:place() === 0 ? $parent.et : time"></h4></div>
+            <div class="col text-success text-center"><h4 data-bind="text:place() === 0 ? $parent.et : time"></h4></div>
         </div>
     </div>
     <div>
