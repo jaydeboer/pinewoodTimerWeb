@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Pinewood Timer</title>
-    <link rel="stylesheet" href="styles/bootstrap.css">
     <link rel="stylesheet" href="styles/site.css">
+    <link rel="stylesheet" href="styles/bootstrap.css">
 </head>
 <body class="bg-dark">
     <div class="container-fluid bg-dark text-white">
@@ -19,7 +19,7 @@
             <div class="col"><h3>Lane 4</h3></div>
         </div>
         <div class="row" data-bind="foreach:lanes">
-            <div class="col"><h1 class="display-1 font-weight-bold" data-bind="visible:place() > 0, text:place, css:{ 'text-primary': place() == 1, 'text-danger': place() == 2, 'text-white': place() == 3, 'text-warning': place() == 4 }">Running</h1></div>
+            <div class="col"><h1 class="display-xl font-weight-bold" data-bind="visible:place() > 0, text:place, css:{ 'text-primary': place() == 1, 'text-danger': place() == 2, 'text-white': place() == 3, 'text-warning': place() == 4 }">Running</h1></div>
         </div>
         <div class="row" data-bind="foreach:lanes">
             <div class="col text-success"><h4 data-bind="text:place() === 0 ? $parent.et : time"></h4></div>
